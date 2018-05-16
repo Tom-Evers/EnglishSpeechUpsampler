@@ -1,7 +1,17 @@
 import tensorflow as tf
+from tensorflow.python.framework.errors_impl import NotFoundError
+from numpy.distutils.misc_util import Configuration
 
-custom_shuffle_module = tf.load_op_library('src/shuffle_op.so')
-shuffle = custom_shuffle_module.shuffle
+# lib_loc = 'src/shuffle_op.so'
+# try:
+#     custom_shuffle_module = tf.load_op_library(lib_loc)
+#     shuffle = custom_shuffle_module.shuffle
+# except NotFoundError:
+#     exit("Something is wrong with '{}', it probably has not been (re)compiled yet.\n".format(lib_loc) +
+#          "Recompile using 'COMPILE_FROM_BINARY.sh' in the src folder, or with the following commands in bash:\n\n"
+#          "TF_CFLAGS=( $(python3 -c 'import tensorflow as tf; print(" ".join(tf.sysconfig.get_compile_flags()))') )\n"
+#          "TF_LFLAGS=( $(python3 -c 'import tensorflow as tf; print(" ".join(tf.sysconfig.get_link_flags()))') )\n"
+#          "g++ -std=c++11 -shared shuffle_op.cc -o test.so -fPIC ${TF_CFLAGS[@]} ${TF_LFLAGS[@]} -O2")
 
 
 # ###################
