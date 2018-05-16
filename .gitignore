@@ -3,3 +3,5 @@ aux/*
 *.txt
 *.out
 *.pyc
+/venv/
+/.idea/
