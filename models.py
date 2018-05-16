@@ -1,8 +1,6 @@
-import os
-
 import tensorflow as tf
 
-custom_shuffle_module = tf.load_op_library('src' + os.sep + 'shuffle_op.so')
+custom_shuffle_module = tf.load_op_library('src/shuffle_op.so')
 shuffle = custom_shuffle_module.shuffle
 
 
@@ -31,6 +29,7 @@ def histogram_variable_summaries(var):
     """
     with tf.name_scope('summaries'):
         tf.summary.histogram('histogram', var)
+
 
 # ###################
 # ###################
@@ -64,7 +63,7 @@ def subpixel_restack_impl(X, n_prime, m_prime, name=None):
     """
     bsize = tf.shape(X)[0]
     r_n = n_prime - X.get_shape().as_list()[1]
-    total_new_space = r_n*m_prime
+    total_new_space = r_n * m_prime
     to_stack = tf.slice(X, [0, 0, m_prime], [-1, -1, -1])
     to_stack = tf.slice(tf.reshape(to_stack, (bsize, -1)),
                         [0, 0], [-1, total_new_space])
@@ -82,7 +81,7 @@ def subpixel_restack(X, n_prime, m_prime=None, name=None):
         for i in range(1, m):
             r_m = i
             m_prime = m - r_m
-            if r_m*n >= m_prime*r_n:
+            if r_m * n >= m_prime * r_n:
                 break
     return subpixel_restack_impl(X, n_prime, m_prime, name=name)
 
@@ -91,20 +90,20 @@ def batch_norm(T, is_training, scope):
     # tf.cond takes nullary functions as its first and second arguments
     return tf.cond(is_training,
                    lambda: tf.contrib.layers.batch_norm(T,
-                                                decay=0.99,
-                                                # zero_debias_moving_mean=True,
-                                                is_training=is_training,
-                                                center=True, scale=True,
-                                                updates_collections=None,
-                                                scope=scope,
-                                                reuse=False),
+                                                        decay=0.99,
+                                                        # zero_debias_moving_mean=True,
+                                                        is_training=is_training,
+                                                        center=True, scale=True,
+                                                        updates_collections=None,
+                                                        scope=scope,
+                                                        reuse=False),
                    lambda: tf.contrib.layers.batch_norm(T,
-                                                decay=0.99,
-                                                is_training=is_training,
-                                                center=True, scale=True,
-                                                updates_collections=None,
-                                                scope=scope,
-                                                reuse=True))
+                                                        decay=0.99,
+                                                        is_training=is_training,
+                                                        center=True, scale=True,
+                                                        updates_collections=None,
+                                                        scope=scope,
+                                                        reuse=True))
 
 
 def weight_variable(shape, name=None):
@@ -184,11 +183,10 @@ def build_downsampling_block(input_tensor,
                              padding='VALID',
                              tensorboard_output=False,
                              name=None):
-
     # assume this layer is twice the depth of the previous layer if no depth
     # information is given
     if depth is None:
-        depth = 2*input_tensor.get_shape().as_list()[-1]
+        depth = 2 * input_tensor.get_shape().as_list()[-1]
 
     with tf.name_scope('{}_layer_weights'.format(layer_number)):
         W = weight_variable([filter_size,
@@ -225,11 +223,10 @@ def build_upsampling_block(input_tensor, residual_tensor,
                            padding='VALID',
                            tensorboard_output=False,
                            name=None):
-
     # assume this layer is half the depth of the previous layer if no depth
     # information is given
     if depth is None:
-        depth = int(input_tensor.get_shape().as_list()[-1]/2)
+        depth = int(input_tensor.get_shape().as_list()[-1] / 2)
 
     with tf.name_scope('{}_layer_weights'.format(layer_number)):
         W = weight_variable([filter_size,
@@ -270,6 +267,7 @@ def build_upsampling_block(input_tensor, residual_tensor,
 
     return l
 
+
 # ######################
 # ######################
 
@@ -282,7 +280,6 @@ def single_fully_connected_model(input_type, input_shape,
                                  n_inputs, n_weights,
                                  tensorboard_output=True,
                                  scope_name='single_fully_connected_layer'):
-
     with tf.name_scope(scope_name):
         # input of the model (examples)
         s = [None]
@@ -323,7 +320,6 @@ def three_layer_conv_model(input_type, input_shape,
                            third_conv_window=15,
                            tensorboard_output=False,
                            scope_name='3-layer_conv'):
-
     with tf.name_scope(scope_name):
         # input of the model (examples)
         s = [None]
@@ -361,7 +357,6 @@ def five_layer_conv_model(input_type, input_shape,
                           fifth_conv_window=5,
                           tensorboard_output=False,
                           scope_name='5-layer_conv'):
-
     with tf.name_scope(scope_name):
         # input of the model (examples)
         s = [None]
@@ -415,7 +410,6 @@ def deep_residual_network(input_type, input_shape,
                           upsample_filter_window=3,
                           tensorboard_output=False,
                           scope_name='deep_residual'):
-
     print('layer summary for {} network'.format(scope_name))
     downsample_layers = []
     upsample_layers = []
@@ -437,7 +431,7 @@ def deep_residual_network(input_type, input_shape,
                                       filter_size=initial_filter_window,
                                       stride=initial_stride,
                                       tensorboard_output=tensorboard_output,
-                                      depth=channel_multiple*num_of_channels,
+                                      depth=channel_multiple * num_of_channels,
                                       is_training=train_flag,
                                       layer_number=1)
         print('downsample layer: {}'.format(d1.get_shape().as_list()[1:]))
@@ -486,7 +480,7 @@ def deep_residual_network(input_type, input_shape,
             upsample_layers.append(u)
             layer_count += 1
 
-        target_size = int(input_size/initial_stride)
+        target_size = int(input_size / initial_stride)
         restack = subpixel_restack(upsample_layers[-1],
                                    target_size + (upsample_filter_window - 1))
         print('restack layer: {}'.format(restack.get_shape().as_list()[1:]))
