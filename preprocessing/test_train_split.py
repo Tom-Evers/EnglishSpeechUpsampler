@@ -7,7 +7,7 @@ os.chdir('..')
 
 
 def write_csv(filename, pairs):
-    with open(filename, 'w') as csvfile:
+    with open(filename, 'w', newline='') as csvfile:
         csv.writer(csvfile).writerows(pairs)
 
 
