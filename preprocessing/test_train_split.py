@@ -3,13 +3,15 @@ import csv
 import json
 import numpy as np
 
+os.chdir('..')
+
 
 def write_csv(filename, pairs):
     with open(filename, 'w') as csvfile:
         csv.writer(csvfile).writerows(pairs)
 
 
-settings_file = os.sep.join(['..', 'settings', 'data_settings.json'])
+settings_file = os.sep.join(['settings', 'data_settings.json'])
 settings = json.load(open(settings_file))
 validation_fraction = settings['validation_fraction']
 test_fraction = settings['test_fraction']

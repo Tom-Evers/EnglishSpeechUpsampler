@@ -1,5 +1,5 @@
 {
-  "input_dir_name_base": "..\\flattened",
+  "input_dir_name_base": "flattened",
   "input_dir_name_dirs": [ "",
     "dev",
     "test",
@@ -14,5 +14,5 @@
   "end_time": 0,
   "sampling_rate_units": "kbps",
   "downsample_rate": 3400,
-  "output_dir_name_base": "..\\preprocessed"
+  "output_dir_name_base": "preprocessed"
 }

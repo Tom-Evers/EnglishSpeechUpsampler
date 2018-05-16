@@ -1,12 +1,14 @@
-import os
 import json
+import os
 import time
-from typing import Any, Callable
+from typing import Callable
 
-from tqdm import tqdm
 import sox
+from tqdm import tqdm
 
-splice_settings_file = os.sep.join(['..', 'settings', 'data_settings.json'])
+os.chdir('..')
+
+splice_settings_file = os.sep.join(['settings', 'data_settings.json'])
 
 settings = json.load(open(splice_settings_file))
 input_data_suffix = settings['input_data_suffix']

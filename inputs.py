@@ -46,8 +46,7 @@ def get_truth_ds_filename_pairs(directory, dataset='train'):
     dataset is one of "train," "test," or "validation"
     """
     result = []
-    with open(os.path.join(directory,
-              '{}_files.csv'.format(dataset)), 'rb') as csvfile:
+    with open(os.sep.join([directory, '{}_files.csv'.format(dataset)]), 'r') as csvfile:
         spamreader = csv.reader(csvfile)
         for row in spamreader:
             result.append(row)
@@ -67,7 +66,7 @@ def get_selected_truth_ds_filename_pairs(directory, selected_files_list,
     """
     result = []
     with open(os.path.join(directory,
-              '{}_files.csv'.format(dataset)), 'rb') as csvfile:
+                           '{}_files.csv'.format(dataset)), 'rb') as csvfile:
         spamreader = csv.reader(csvfile)
         for row in spamreader:
             for file_tag in selected_files_list:
@@ -94,7 +93,7 @@ def read_file_pair(filename_pair, mono=True):
     ds_waveform, _ = librosa.load(filename_pair[1], sr=true_br, mono=mono)
     # truth, example
     return true_waveform.reshape((-1, channel)), \
-        ds_waveform.reshape((-1, channel))
+           ds_waveform.reshape((-1, channel))
 
 
 def gather_all_files_by_tags(file_dir, tags):
