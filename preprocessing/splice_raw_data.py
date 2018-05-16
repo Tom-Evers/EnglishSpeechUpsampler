@@ -63,9 +63,7 @@ for input_dir_name_dir in input_dir_name_dirs:
         num_format = '{{:0{}d}}'.format(num_of_digits)
         file_name_template = '{{}}_{}-{}.wav'.format(num_format, num_format)
 
-        # print('On file {}'.format(filename_base))
         for i in range(n_iterations):
-            # create trasnformer
             splice = sox.Transformer()
             splice_and_downsample = sox.Transformer()
 
