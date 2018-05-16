@@ -1,11 +1,11 @@
 {
-  "input_dir_name_base": "/home/paperspace/Documents/TEDLIUM/TEDLIUM_release2/{}/sph",
+  "input_dir_name_base": "C:\\Users\\tevers\\PycharmProjects\\EnglishSpeechUpsampler-master\\flattened",
   "input_dir_name_dirs": [
     "dev",
     "test",
     "train"
   ],
-  "input_data_suffix": ".sph",
+  "input_data_suffix": ".flac",
   "test_fraction": 0.2,
   "validation_fraction": 0.2,
   "time_units": "seconds",
@@ -13,6 +13,6 @@
   "start_time": 30,
   "end_time": -30,
   "sampling_rate_units": "kbps",
-  "downsample_rate": 4000,
-  "output_dir_name_base": "/home/paperspace/Documents/TEDLIUM/TEDLIUM_release2/preprocessed"
+  "downsample_rate": 3400,
+  "output_dir_name_base": "C:\\Users\\tevers\\PycharmProjects\\EnglishSpeechUpsampler-master\\preprocessed"
 }
