@@ -144,7 +144,7 @@ Here is a list of the different configuration scripts
 The steps to training the model are:
 
 1. Download and unzip the
-[TEDLIUM](http://www-lium.univ-lemans.fr/en/content/ted-lium-corpus) datase.
+[TEDLIUM](http://www-lium.univ-lemans.fr/en/content/ted-lium-corpus) datase. 
 2. Configure the [data_settings](settings/data_settings.json) JSON file to
 point to the location of the dataset (`input_dir_name_base`) as well as
 specifying the location to store the output (`output_dir_name_base`).
@@ -154,6 +154,9 @@ lead to faster model evaluations at the cost of more files being stored on disk.
 4. Run the [splice_raw_data](preprocessing/splice_raw_data.py) script from the
 preprocessing directory (or run it from any directory as long as the
 `splice_settings_file` variable points to the correct JSON file).
+<br>NOTE: On Windows, the Sox library (version 14.4.2) contains a small bug. Go to the Sox library
+location, open the file `core.py` with administrator privilages and replace the line 
+<br>`args = ['soxi']` by `args = ['sox --i']`
 5. Next, run the [test_train_split](preprocessing/test_train_split.py) script to
 create the CSV files that store which samples are used for training, validation,
 and testing.
