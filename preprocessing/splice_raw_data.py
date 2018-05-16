@@ -34,12 +34,12 @@ processed_data_info = settings
 processed_data_info['original_bitrate'] = None
 
 for input_dir_name_dir in input_dir_name_dirs:
-    input_dir_name = os.sep.join([input_dir_name_base, input_dir_name_dir])
+    input_dir_name = os.path.join(input_dir_name_base, input_dir_name_dir)
+
+    time.sleep(0.5)
     if not os.path.exists(input_dir_name) or os.path.isfile(input_dir_name):
         print("Path '{}' does not exist. Skipping...".format(input_dir_name))
         continue
-
-    time.sleep(0.5)
     print("Processing path '{}'.".format(input_dir_name))
     time.sleep(0.5)
 

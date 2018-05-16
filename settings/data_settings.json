@@ -1,6 +1,6 @@
 {
-  "input_dir_name_base": "C:\\Users\\tevers\\PycharmProjects\\EnglishSpeechUpsampler-master\\flattened",
-  "input_dir_name_dirs": [
+  "input_dir_name_base": "..\\flattened",
+  "input_dir_name_dirs": [ "",
     "dev",
     "test",
     "train"
@@ -14,5 +14,5 @@
   "end_time": -30,
   "sampling_rate_units": "kbps",
   "downsample_rate": 3400,
-  "output_dir_name_base": "C:\\Users\\tevers\\PycharmProjects\\EnglishSpeechUpsampler-master\\preprocessed"
+  "output_dir_name_base": "..\\preprocessed"
 }
