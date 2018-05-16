@@ -7,9 +7,9 @@ from inputs import get_truth_ds_filename_pairs
 import tensorflow as tf
 from models import deep_residual_network
 
-data_settings_file = 'settings/data_settings.json'
-model_settings_file = 'settings/model_settings.json'
-upsampling_settings_file = 'settings/upsampling_settings.json'
+data_settings_file = 'settings' + os.sep + 'data_settings.json'
+model_settings_file = 'settings' + os.sep + 'model_settings.json'
+upsampling_settings_file = 'settings' + os.sep + 'upsampling_settings.json'
 
 data_settings = json.load(open(data_settings_file))
 model_settings = json.load(open(model_settings_file))

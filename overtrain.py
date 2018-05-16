@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import json
 import librosa
@@ -9,9 +11,9 @@ from models import deep_residual_network
 from losses import mse
 from optimizers import make_variable_learning_rate, setup_optimizer
 
-settings_file = 'settings/data_settings.json'
-training_settings_file = 'settings/overtraining_settings.json'
-model_settings_file = 'settings/model_settings.json'
+settings_file = 'settings' + os.sep + 'data_settings.json'
+training_settings_file = 'settings' + os.sep + 'overtraining_settings.json'
+model_settings_file = 'settings' + os.sep + 'model_settings.json'
 
 settings = json.load(open(settings_file))
 training_settings = json.load(open(training_settings_file))
@@ -119,8 +121,7 @@ sess = tf.Session()
 
 # initialize tensorboard file writers
 merged = tf.summary.merge_all()
-train_writer = tf.summary.FileWriter('aux/tensorboard/overtrain',
-                                     sess.graph)
+train_writer = tf.summary.FileWriter(os.sep.join(['aux', 'tensorboard', 'overtrain']), sess.graph)
 
 # initialize the variables for the session
 sess.run(tf.global_variables_initializer())
@@ -136,7 +137,7 @@ example_loss_count = 0
 for truth, example in next_batch(1, train_truth_ds_pairs):
     example_loss += np.mean((truth[0].flatten()-example[0].flatten())**2)
     example_loss_count += 1
-example_loss = example_loss/float(example_loss_count)
+example_loss = example_loss / float(example_loss_count)
 
 print('loss score of example {}'.format(example_loss))
 
@@ -163,7 +164,7 @@ for i in range(NUMBER_OF_EPOCHS):
                                       y_true: batch[0]})
         train_writer.add_summary(summary, i)
 
-save_path = saver.save(sess, "aux/model_checkpoints/overtrain_final.ckpt")
+save_path = saver.save(sess, os.sep.join(['aux', 'model_checkpoints', 'overtrain_final.ckpt']))
 print("Model checkpoints will be saved in file: {}".format(save_path))
 train_loss_file.close()
 

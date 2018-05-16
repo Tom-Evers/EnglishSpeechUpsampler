@@ -1,6 +1,8 @@
+import os
+
 import tensorflow as tf
 
-custom_shuffle_module = tf.load_op_library('src/shuffle_op.so')
+custom_shuffle_module = tf.load_op_library('src' + os.sep + 'shuffle_op.so')
 shuffle = custom_shuffle_module.shuffle
 
 

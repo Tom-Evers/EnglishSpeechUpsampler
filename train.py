@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import json
 import librosa
@@ -9,9 +11,9 @@ from models import deep_residual_network
 from losses import mse
 from optimizers import make_variable_learning_rate, setup_optimizer
 
-data_settings_file = 'settings/data_settings.json'
-training_settings_file = 'settings/training_settings.json'
-model_settings_file = 'settings/model_settings.json'
+data_settings_file = 'settings' + os.sep + 'data_settings.json'
+training_settings_file = 'settings' + os.sep + 'training_settings.json'
+model_settings_file = 'settings' + os.sep + 'model_settings.json'
 
 data_settings = json.load(open(data_settings_file))
 training_settings = json.load(open(training_settings_file))
@@ -32,7 +34,6 @@ INITIAL_LEARNING_RATE = training_settings['initial_learning_rate']
 example_number = 0
 write_tb = False
 file_name_lists_dir = data_settings['output_dir_name_base']
-
 
 # ###########
 # DATA IMPORT
@@ -89,7 +90,7 @@ loss = mse('waveform_loss', y_true, model)
 # ####################
 
 # Variable that affect learning rate.
-num_batches_per_epoch = float(SAMPLES_PER_EPOCH)/BATCH_SIZE
+num_batches_per_epoch = float(SAMPLES_PER_EPOCH) / BATCH_SIZE
 decay_steps = int(num_batches_per_epoch * NUM_EPOCHS_PER_DECAY)
 
 # Decay the learning rate based on the number of steps.
@@ -119,12 +120,10 @@ sess = tf.Session()
 
 # initialize tensorboard file writers
 merged = tf.summary.merge_all()
-train_writer = tf.summary.FileWriter('aux/tensorboard/overtrain',
-                                     sess.graph)
+train_writer = tf.summary.FileWriter(os.sep.join(['aux', 'tensorboard', 'overtrain']), sess.graph)
 
 # initialize the variables for the session
 sess.run(tf.global_variables_initializer())
-
 
 # #############
 # TRAINING LOOP
@@ -133,25 +132,25 @@ sess.run(tf.global_variables_initializer())
 model_name = model.name.replace('/', '_').replace(':', '_')
 val_loss_file = open('val_loss.txt', 'w')
 train_loss_file = open('train_loss.txt', 'w')
-epoch_scale = int(SAMPLES_PER_EPOCH/BATCH_SIZE)
-for i in range(NUMBER_OF_EPOCHS*epoch_scale):
+epoch_scale = int(SAMPLES_PER_EPOCH / BATCH_SIZE)
+for i in range(NUMBER_OF_EPOCHS * epoch_scale):
     is_new_epoch = ((i + 1) % epoch_scale == 0)
     if is_new_epoch:
         epoch_num = int((i + 1) / epoch_scale)
     if is_new_epoch:
         print('Calculating validation loss ({} iterations)'.format(
-            len(val_truth_ds_pairs)/BATCH_SIZE))
+            len(val_truth_ds_pairs) / BATCH_SIZE))
         total_val_loss = 0
         val_count = 0
         for pair in next_batch(BATCH_SIZE, val_truth_ds_pairs):
             loss_value = sess.run([loss],
-                                feed_dict={train_flag: False,
-                                           x: pair[1],
-                                           y_true: pair[0]}
-                                )
+                                  feed_dict={train_flag: False,
+                                             x: pair[1],
+                                             y_true: pair[0]}
+                                  )
             total_val_loss += np.mean(loss_value)
             val_count += 1
-        loss_value = total_val_loss/val_count
+        loss_value = total_val_loss / val_count
         val_loss_file.write('{},{}\n'.format(epoch_num,
                                              loss_value))
         print("Epoch {}, Val Loss {}".format(epoch_num, loss_value))
@@ -166,9 +165,9 @@ for i in range(NUMBER_OF_EPOCHS*epoch_scale):
             # train_writer.add_summary(summary, i)
             train_loss_file.write('{}, {}\n'.format(epoch_num, loss))
             if epoch_num % 3 == 0:
-                save_path =\
-                    saver.save(sess, "aux/model_checkpoints/{}_{}.ckpt".format(
-                                        model_name, epoch_num))
+                save_path = saver.save(sess, os.sep.join(['aux',
+                                                          'model_checkpoints',
+                                                          '{}_{}.ckpt'.format(model_name, epoch_num)]))
 
     train_step.run(feed_dict={train_flag: True,
                               x: batch[1],
@@ -176,16 +175,17 @@ for i in range(NUMBER_OF_EPOCHS*epoch_scale):
                    session=sess)
     if (i + 1) % 500 == 0 and not is_new_epoch:
         loss_val = np.mean(sess.run([loss],
-                                feed_dict={train_flag: True,
-                                           x: batch[1],
-                                           y_true: batch[0]}))
+                                    feed_dict={train_flag: True,
+                                               x: batch[1],
+                                               y_true: batch[0]}))
         print("Iteration {}, Loss {}".format(i + 1, loss_val))
 
 val_loss_file.close()
 train_loss_file.close()
 # Save the variables to disk.
-save_path = saver.save(sess, "aux/model_checkpoints/{}_final.ckpt".format(
-    model_name))
+save_path = saver.save(sess, os.sep.join(["aux', "
+                                          "'model_checkpoints', "
+                                          "'{}_final.ckpt".format(model_name)]))
 print("Model checkpoints will be saved in file: {}".format(save_path))
 
 truth, example = read_file_pair(val_truth_ds_pairs[1])
