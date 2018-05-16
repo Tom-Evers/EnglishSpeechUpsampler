@@ -1,6 +1,5 @@
 import tensorflow as tf
-from tensorflow.python.framework.errors_impl import NotFoundError
-from numpy.distutils.misc_util import Configuration
+
 
 # lib_loc = 'src/shuffle_op.so'
 # try:

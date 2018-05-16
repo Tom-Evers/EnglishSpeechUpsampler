@@ -1,8 +1,11 @@
 import os
+import time
 
 import numpy as np
 import json
 import librosa
+from tqdm import tqdm
+
 from inputs import get_bit_rates_and_waveforms
 from inputs import randomly_batch, next_batch
 from inputs import read_file_pair, get_truth_ds_filename_pairs
@@ -111,7 +114,9 @@ val_loss_file = open('val_loss.txt', 'w')
 train_loss_file = open('train_loss.txt', 'w')
 epoch_scale = int(SAMPLES_PER_EPOCH / BATCH_SIZE)
 epoch_num = 0  # FIXME: Variable needs to be initialized. Is this the correct initial value?
-for i in range(NUMBER_OF_EPOCHS * epoch_scale):
+print("Started training.")
+time.sleep(0.5)
+for i in tqdm(range(NUMBER_OF_EPOCHS * epoch_scale)):
     is_new_epoch = ((i + 1) % epoch_scale == 0)
     if is_new_epoch:
         epoch_num = int((i + 1) / epoch_scale)
