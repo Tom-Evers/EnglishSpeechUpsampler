@@ -121,7 +121,7 @@ sess = tf.Session()
 
 # initialize tensorboard file writers
 merged = tf.summary.merge_all()
-train_writer = tf.summary.FileWriter(os.sep.join(['aux', 'tensorboard', 'overtrain']), sess.graph)
+train_writer = tf.summary.FileWriter(os.sep.join(['auxiliary', 'tensorboard', 'overtrain']), sess.graph)
 
 # initialize the variables for the session
 sess.run(tf.global_variables_initializer())
@@ -164,7 +164,7 @@ for i in range(NUMBER_OF_EPOCHS):
                                       y_true: batch[0]})
         train_writer.add_summary(summary, i)
 
-save_path = saver.save(sess, os.sep.join(['aux', 'model_checkpoints', 'overtrain_final.ckpt']))
+save_path = saver.save(sess, os.sep.join(['auxiliary', 'model_checkpoints', 'overtrain_final.ckpt']))
 print("Model checkpoints will be saved in file: {}".format(save_path))
 train_loss_file.close()
 

@@ -93,7 +93,13 @@ train_step = setup_optimizer(lr, loss, tf.train.AdamOptimizer, using_batch_norm=
 saver = tf.train.Saver()
 sess = tf.Session()
 merged = tf.summary.merge_all()
-train_writer = tf.summary.FileWriter(os.sep.join(['aux', 'tensorboard', 'overtrain']), sess.graph)
+overtrain_dir_list = ['auxiliary', 'tensorboard', 'overtrain']
+for i in range(1, len(overtrain_dir_list)):
+    subdir = os.sep.join(overtrain_dir_list[:i])
+    if not os.path.exists(subdir):
+        os.mkdir(subdir)
+overtrain_dir = os.sep.join(overtrain_dir_list)
+train_writer = tf.summary.FileWriter(overtrain_dir, sess.graph)
 sess.run(tf.global_variables_initializer())
 
 # #############
