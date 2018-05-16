@@ -5,10 +5,8 @@ import numpy as np
 
 
 def write_csv(filename, pairs):
-    with open(filename, 'wb') as csvfile:
-        spamwriter = csv.writer(csvfile)
-        for pair in pairs:
-            spamwriter.writerow(pair)
+    with open(filename, 'w') as csvfile:
+        csv.writer(csvfile).writerows(pairs)
 
 
 settings_file = os.sep.join(['..', 'settings', 'data_settings.json'])
