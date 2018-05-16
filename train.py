@@ -115,7 +115,6 @@ for i in range(NUMBER_OF_EPOCHS * epoch_scale):
     is_new_epoch = ((i + 1) % epoch_scale == 0)
     if is_new_epoch:
         epoch_num = int((i + 1) / epoch_scale)
-    if is_new_epoch:
         print('Calculating validation loss ({} iterations)'.format(len(val_truth_ds_pairs) / BATCH_SIZE))
         total_val_loss = 0
         val_count = 0
@@ -134,7 +133,7 @@ for i in range(NUMBER_OF_EPOCHS * epoch_scale):
             print("Epoch {}, Loss {}".format(epoch_num, loss))
             train_loss_file.write('{}, {}\n'.format(epoch_num, loss))
             if epoch_num % 3 == 0:
-                save_path = saver.save(sess, os.sep.join(['aux',
+                save_path = saver.save(sess, os.sep.join(['auxiliary',
                                                           'model_checkpoints',
                                                           '{}_{}.ckpt'.format(model_name, epoch_num)]))
 
@@ -149,7 +148,7 @@ for i in range(NUMBER_OF_EPOCHS * epoch_scale):
 
 val_loss_file.close()
 train_loss_file.close()
-save_path = saver.save(sess, os.sep.join(['aux', 'model_checkpoints', '{}_final.ckpt'.format(model_name)]))
+save_path = saver.save(sess, os.sep.join(['auxiliary', 'model_checkpoints', '{}_final.ckpt'.format(model_name)]))
 print("Model checkpoints will be saved in file: {}".format(save_path))
 
 truth, example = read_file_pair(val_truth_ds_pairs[1])
