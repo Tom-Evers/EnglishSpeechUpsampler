@@ -1,6 +1,7 @@
 import os
 import json
 import time
+from typing import Any, Callable
 
 from tqdm import tqdm
 import sox
@@ -12,8 +13,13 @@ input_data_suffix = settings['input_data_suffix']
 input_dir_name_base = settings['input_dir_name_base']
 input_dir_name_dirs = settings['input_dir_name_dirs']
 splice_duration = settings['splice_duration']
-start_time = settings['start_time']
-end_time = settings['end_time']
+try:
+    start_offset = int(settings['start_time'])
+    end_offset = int(settings['end_time'])
+except ValueError:
+    print("{} malformed, enter integer start and end offsets. Using 0 and -0 for now.".format(splice_settings_file))
+    start_offset = 0
+    end_offset = 0
 downsample_rate = settings['downsample_rate']
 output_dir_name_base = settings['output_dir_name_base']
 
@@ -50,36 +56,40 @@ for input_dir_name_dir in input_dir_name_dirs:
             continue
         filename_base = os.path.splitext(filename)[0]
 
-        # This is the total audio track duration less the
-        # start and end times
-        duration = sox.file_info.duration(input_filename) - (start_time - end_time)
+        # This is the total audio track duration minus the start and end times
+        duration = sox.file_info.duration(input_filename) - start_offset + end_offset
         if processed_data_info['original_bitrate'] is None:
             processed_data_info['original_bitrate'] = sox.file_info.bitrate(input_filename)
             if 'kb' in processed_data_info['sampling_rate_units']:
                 processed_data_info['original_bitrate'] *= 1000
 
-        n_iterations = int(duration / splice_duration)
-        num_of_digits = len(str(int(duration)))
-        num_format = '{{:0{}d}}'.format(num_of_digits)
-        file_name_template = '{{}}_{}-{}.wav'.format(num_format, num_format)
+        filename_template: Callable[[str, int, int], str] = lambda original_filename, begin, end: \
+            "{}_{}-{}.wav".format(original_filename, str(int(begin)).zfill(2), str(int(end)).zfill(2))
 
-        for i in range(n_iterations):
+        splice_start_time = start_offset
+        file_end_time = start_offset + duration
+        SPLICES_SHOULD_BE_EQUAL_IN_LENGTH = True
+        equal_length_check = splice_duration if SPLICES_SHOULD_BE_EQUAL_IN_LENGTH else 0
+        while splice_start_time + equal_length_check < file_end_time:
             splice = sox.Transformer()
             splice_and_downsample = sox.Transformer()
 
-            begin = int(start_time + i * splice_duration)
-            end = int(begin + splice_duration)
-            output_filename = file_name_template.format(filename_base, begin, end)
+            begin = start_offset + splice_start_time
+            end = min(file_end_time, splice_start_time + splice_duration)
+
+            output_filename = filename_template(filename_base, begin, end)
             output_filename = os.path.join(output_dir_name, output_filename)
-            ds_output_filename = file_name_template.format(filename_base, begin, end)
+            ds_output_filename = filename_template(filename_base, begin, end)
             ds_output_filename = os.path.join(ds_output_dir_name, ds_output_filename)
 
             splice.trim(begin, end)
+            splice.build(input_filename, output_filename)
+
             splice_and_downsample.trim(begin, end)
             splice_and_downsample.convert(samplerate=downsample_rate)
-
-            splice.build(input_filename, output_filename)
             splice_and_downsample.build(input_filename, ds_output_filename)
+
+            splice_start_time = end
 
 with open(output_data_info_file_name, 'w') as outfile:
     json.dump(processed_data_info, outfile)
