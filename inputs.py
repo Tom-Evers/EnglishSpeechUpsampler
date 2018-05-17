@@ -46,7 +46,7 @@ def get_truth_ds_filename_pairs(directory, dataset='train'):
     dataset is one of "train," "test," or "validation"
     """
     result = []
-    with open(os.sep.join([directory, '{}_files.csv'.format(dataset)]), 'r') as csvfile:
+    with open(os.path.join(directory, '{}_files.csv'.format(dataset)), 'r') as csvfile:
         spamreader = csv.reader(csvfile)
         for row in spamreader:
             result.append(row)

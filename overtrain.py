@@ -11,9 +11,9 @@ from models import deep_residual_network
 from losses import mse
 from optimizers import make_variable_learning_rate, setup_optimizer
 
-settings_file = 'settings' + os.sep + 'data_settings.json'
-training_settings_file = 'settings' + os.sep + 'overtraining_settings.json'
-model_settings_file = 'settings' + os.sep + 'model_settings.json'
+settings_file = os.path.join('settings', 'data_settings.json')
+training_settings_file = os.path.join('settings', 'overtraining_settings.json')
+model_settings_file = os.path.join('settings', 'model_settings.json')
 
 settings = json.load(open(settings_file))
 training_settings = json.load(open(training_settings_file))
@@ -36,7 +36,6 @@ write_tb = False
 file_name_lists_dir = settings['output_dir_name_base']
 # selected_files = ['BillGates_2010']
 selected_files = ['RobertGupta_2010U']
-
 
 # ###########
 # DATA IMPORT
@@ -91,7 +90,7 @@ loss = mse('waveform_loss', y_true, model)
 # ####################
 
 # Variable that affect learning rate.
-num_batches_per_epoch = float(SAMPLES_PER_EPOCH)/BATCH_SIZE
+num_batches_per_epoch = float(SAMPLES_PER_EPOCH) / BATCH_SIZE
 decay_steps = int(num_batches_per_epoch * NUM_EPOCHS_PER_DECAY)
 
 # Decay the learning rate based on the number of steps.
@@ -121,11 +120,10 @@ sess = tf.Session()
 
 # initialize tensorboard file writers
 merged = tf.summary.merge_all()
-train_writer = tf.summary.FileWriter(os.sep.join(['auxiliary', 'tensorboard', 'overtrain']), sess.graph)
+train_writer = tf.summary.FileWriter(os.path.join('auxiliary', 'tensorboard', 'overtrain'), sess.graph)
 
 # initialize the variables for the session
 sess.run(tf.global_variables_initializer())
-
 
 # #############
 # TRAINING LOOP
@@ -135,7 +133,7 @@ sess.run(tf.global_variables_initializer())
 example_loss = 0.0
 example_loss_count = 0
 for truth, example in next_batch(1, train_truth_ds_pairs):
-    example_loss += np.mean((truth[0].flatten()-example[0].flatten())**2)
+    example_loss += np.mean((truth[0].flatten() - example[0].flatten()) ** 2)
     example_loss_count += 1
 example_loss = example_loss / float(example_loss_count)
 
@@ -164,7 +162,7 @@ for i in range(NUMBER_OF_EPOCHS):
                                       y_true: batch[0]})
         train_writer.add_summary(summary, i)
 
-save_path = saver.save(sess, os.sep.join(['auxiliary', 'model_checkpoints', 'overtrain_final.ckpt']))
+save_path = saver.save(sess, os.path.join('auxiliary', 'model_checkpoints', 'overtrain_final.ckpt'))
 print("Model checkpoints will be saved in file: {}".format(save_path))
 train_loss_file.close()
 

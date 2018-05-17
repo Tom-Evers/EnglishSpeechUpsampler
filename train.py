@@ -14,9 +14,9 @@ from models import deep_residual_network
 from losses import mse
 from optimizers import make_variable_learning_rate, setup_optimizer
 
-data_settings_file = 'settings' + os.sep + 'data_settings.json'
-training_settings_file = 'settings' + os.sep + 'training_settings.json'
-model_settings_file = 'settings' + os.sep + 'model_settings.json'
+data_settings_file = os.path.join('settings', 'data_settings.json')
+training_settings_file = os.path.join('settings', 'training_settings.json')
+model_settings_file = os.path.join('settings', 'model_settings.json')
 
 data_settings = json.load(open(data_settings_file))
 training_settings = json.load(open(training_settings_file))
@@ -105,10 +105,10 @@ sess = tf.Session()
 merged = tf.summary.merge_all()
 overtrain_dir_list = ['auxiliary', 'tensorboard', 'overtrain']
 for i in range(1, len(overtrain_dir_list)):
-    subdir = os.sep.join(overtrain_dir_list[:i])
+    subdir = os.path.join(*overtrain_dir_list[:i])
     if not os.path.exists(subdir):
         os.mkdir(subdir)
-overtrain_dir = os.sep.join(overtrain_dir_list)
+overtrain_dir = os.path.join(*overtrain_dir_list)
 train_writer = tf.summary.FileWriter(overtrain_dir, sess.graph)
 sess.run(tf.global_variables_initializer())
 
@@ -145,9 +145,9 @@ for i in tqdm(range(NUMBER_OF_EPOCHS * epoch_scale)):
             print("Epoch {}, Loss {}".format(epoch_num, loss))
             train_loss_file.write('{}, {}\n'.format(epoch_num, loss))
             if epoch_num % 3 == 0:
-                save_path = saver.save(sess, os.sep.join(['auxiliary',
+                save_path = saver.save(sess, os.path.join('auxiliary',
                                                           'model_checkpoints',
-                                                          '{}_{}.ckpt'.format(model_name, epoch_num)]))
+                                                          '{}_{}.ckpt'.format(model_name, epoch_num)))
 
     train_step.run(feed_dict={train_flag: True, x: batch[1], y_true: batch[0]}, session=sess)
     if (i + 1) % 500 == 0 and not is_new_epoch:
@@ -160,7 +160,7 @@ for i in tqdm(range(NUMBER_OF_EPOCHS * epoch_scale)):
 
 val_loss_file.close()
 train_loss_file.close()
-save_path = saver.save(sess, os.sep.join(['auxiliary', 'model_checkpoints', '{}_final.ckpt'.format(model_name)]))
+save_path = saver.save(sess, os.path.join('auxiliary', 'model_checkpoints', '{}_final.ckpt'.format(model_name)))
 print("Model checkpoints will be saved in file: {}".format(save_path))
 
 truth, example = read_file_pair(val_truth_ds_pairs[1])

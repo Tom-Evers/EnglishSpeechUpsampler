@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 os.chdir('..')
 
-splice_settings_file = os.sep.join(['settings', 'data_settings.json'])
+splice_settings_file = os.path.join('settings', 'data_settings.json')
 
 settings = json.load(open(splice_settings_file))
 input_data_suffix = settings['input_data_suffix']

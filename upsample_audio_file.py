@@ -7,9 +7,9 @@ from inputs import get_truth_ds_filename_pairs
 import tensorflow as tf
 from models import deep_residual_network
 
-data_settings_file = 'settings' + os.sep + 'data_settings.json'
-model_settings_file = 'settings' + os.sep + 'model_settings.json'
-upsampling_settings_file = 'settings' + os.sep + 'upsampling_settings.json'
+data_settings_file = os.path.join('settings', 'data_settings.json')
+model_settings_file = os.path.join('settings', 'model_settings.json')
+upsampling_settings_file = os.path.join('settings', 'upsampling_settings.json')
 
 data_settings = json.load(open(data_settings_file))
 model_settings = json.load(open(model_settings_file))
@@ -28,8 +28,8 @@ true_wf = true_wf.reshape((-1, 1))
 
 KBPS = true_br
 SECONDS_PER_INPUT = data_settings_file['splice_duration']
-INPUT_SIZE = KBPS*SECONDS_PER_INPUT
-DOWNSAMPLE_FACTOR = KBPS//data_settings_file['downsample_rate']
+INPUT_SIZE = KBPS * SECONDS_PER_INPUT
+DOWNSAMPLE_FACTOR = KBPS // data_settings_file['downsample_rate']
 BEGIN_OFFSET = data_settings_file['start_time']
 END_OFFSET = data_settings_file['end_time']
 
@@ -37,26 +37,23 @@ file_name = upsampling_settings['input_file']
 source_dir = os.path.split(file_name)[0]
 file_name_base = os.path.split(file_name)[1]
 
-
 model_checkpoint_file_name = upsampling_settings['model_checkpoint_file']
 
-
 true_wf, true_br = librosa.load(file_name, sr=None, mono=True)
-ds_wf, ds_br = librosa.load(file_name, sr=int(true_br/DOWNSAMPLE_FACTOR),
+ds_wf, ds_br = librosa.load(file_name, sr=int(true_br / DOWNSAMPLE_FACTOR),
                             mono=True)
 ds_wf = librosa.core.resample(ds_wf, ds_br, true_br)
 
 # trim waveforms
 if END_OFFSET == 0:
-    true_wf = true_wf[BEGIN_OFFSET*true_br:]
-    ds_wf = ds_wf[BEGIN_OFFSET*true_br:]
+    true_wf = true_wf[BEGIN_OFFSET * true_br:]
+    ds_wf = ds_wf[BEGIN_OFFSET * true_br:]
 else:
-    true_wf = true_wf[BEGIN_OFFSET*true_br:END_OFFSET*true_br]
-    ds_wf = ds_wf[BEGIN_OFFSET*true_br:END_OFFSET*true_br]
-true_wf = true_wf[:int(true_wf.size/INPUT_SIZE)*INPUT_SIZE]
-ds_wf = ds_wf[:int(ds_wf.size/INPUT_SIZE)*INPUT_SIZE]
-number_of_reco_iterations = int(ds_wf.size/INPUT_SIZE)
-
+    true_wf = true_wf[BEGIN_OFFSET * true_br:END_OFFSET * true_br]
+    ds_wf = ds_wf[BEGIN_OFFSET * true_br:END_OFFSET * true_br]
+true_wf = true_wf[:int(true_wf.size / INPUT_SIZE) * INPUT_SIZE]
+ds_wf = ds_wf[:int(ds_wf.size / INPUT_SIZE) * INPUT_SIZE]
+number_of_reco_iterations = int(ds_wf.size / INPUT_SIZE)
 
 # ################
 # MODEL DEFINITION
@@ -79,7 +76,6 @@ sess = tf.Session()
 # restore model from checkpoint file
 saver.restore(sess, model_checkpoint_file_name)
 
-
 # ###################
 # RECONSTRUCTION LOOP
 # ###################
@@ -87,8 +83,8 @@ saver.restore(sess, model_checkpoint_file_name)
 reco_wf = np.empty(ds_wf.size)
 for i in range(number_of_reco_iterations):
     print('Segement {} of {}'.format(i + 1, number_of_reco_iterations))
-    example = ds_wf[i*INPUT_SIZE:(i + 1)*INPUT_SIZE]
-    reco_wf[i*INPUT_SIZE:(i + 1)*INPUT_SIZE] = \
+    example = ds_wf[i * INPUT_SIZE:(i + 1) * INPUT_SIZE]
+    reco_wf[i * INPUT_SIZE:(i + 1) * INPUT_SIZE] = \
         model.eval(feed_dict={train_flag: False,
                               x: example.reshape(1, -1, 1)},
                    session=sess).flatten()
