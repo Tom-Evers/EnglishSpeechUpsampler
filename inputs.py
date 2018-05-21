@@ -1,7 +1,9 @@
-import os
 import csv
-import numpy as np
+import os
+from typing import Callable
+
 import librosa
+import numpy as np
 
 """
 The inputs are assumed to already be preprocessed and spliced into
@@ -36,6 +38,14 @@ def get_bit_rates_and_waveforms(filename_pair):
     return [[true_br, ds_br], [true_waveform, ds_waveform]]
 
 
+path_sep_sanitization: Callable[[str], str] = lambda x: x.replace('\\', os.sep).replace('/', os.sep)
+
+
+def sanitize_tuple(tup):
+    t1, t2 = tup
+    return path_sep_sanitization(t1), path_sep_sanitization(t2)
+
+
 def get_truth_ds_filename_pairs(directory, dataset='train'):
     """
     returns a list of file name pairs that represent:
@@ -49,7 +59,7 @@ def get_truth_ds_filename_pairs(directory, dataset='train'):
     with open(os.path.join(directory, '{}_files.csv'.format(dataset)), 'r') as csvfile:
         spamreader = csv.reader(csvfile)
         for row in spamreader:
-            result.append(row)
+            result.append(sanitize_tuple(row))
     return result
 
 

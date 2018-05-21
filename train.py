@@ -45,14 +45,7 @@ file_name_lists_dir = data_settings['output_dir_name_base']
 train_truth_ds_pairs = get_truth_ds_filename_pairs(file_name_lists_dir, 'train')
 val_truth_ds_pairs = get_truth_ds_filename_pairs(file_name_lists_dir, 'validation')
 
-try:
-    br_pairs, wf_pairs = get_bit_rates_and_waveforms(train_truth_ds_pairs[0])
-except FileNotFoundError as err:
-    br_pairs, wf_pairs = [], []
-    exit("Unable to retrieve bitrates and waveforms due to following error:\n" +
-         str(err) + '\n' +
-         "If this displays mixing path separators, try rerunning "
-         "`test_train_split.py` in the `preprocessing` folder first.")
+br_pairs, wf_pairs = get_bit_rates_and_waveforms(train_truth_ds_pairs[0])
 true_br = br_pairs[0]
 true_wf = wf_pairs[0]
 # reshape for mono waveforms
