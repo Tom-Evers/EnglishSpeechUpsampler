@@ -1,7 +1,6 @@
 import json
 import os
 import time
-from typing import Callable
 
 import sox
 from tqdm import tqdm
@@ -65,8 +64,10 @@ for input_dir_name_dir in input_dir_name_dirs:
             if 'kb' in processed_data_info['sampling_rate_units']:
                 processed_data_info['original_bitrate'] *= 1000
 
-        filename_template: Callable[[str, int, int], str] = lambda original_filename, begin, end: \
-            "{}_{}-{}.wav".format(original_filename, str(int(begin)).zfill(2), str(int(end)).zfill(2))
+
+        def filename_template(original_filename, begin, end):
+            return "{}_{}-{}.wav".format(original_filename, str(int(begin)).zfill(2), str(int(end)).zfill(2))
+
 
         splice_start_time = start_offset
         file_end_time = start_offset + duration
