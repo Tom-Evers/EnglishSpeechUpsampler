@@ -22,6 +22,8 @@ except ValueError:
     start_offset = 0
     end_offset = 0
 downsample_rate = settings['downsample_rate']
+if 'kb' in settings['sampling_rate_units']:
+    downsample_rate *= 1000
 output_dir_name_base = settings['output_dir_name_base']
 
 output_dir_name = os.path.join(output_dir_name_base, 'splices')

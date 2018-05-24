@@ -13,6 +13,6 @@
   "start_time": 0,
   "end_time": 0,
   "sampling_rate_units": "kbps",
-  "downsample_rate": 3400,
+  "downsample_rate": 6.8,
   "output_dir_name_base": "preprocessed"
 }
