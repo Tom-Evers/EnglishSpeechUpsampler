@@ -38,7 +38,8 @@ def get_bit_rates_and_waveforms(filename_pair):
     return [[true_br, ds_br], [true_waveform, ds_waveform]]
 
 
-path_sep_sanitization: Callable[[str], str] = lambda x: x.replace('\\', os.sep).replace('/', os.sep)
+def path_sep_sanitization(x):
+    return x.replace('\\', os.sep).replace('/', os.sep)
 
 
 def sanitize_tuple(tup):
