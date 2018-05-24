@@ -39,9 +39,6 @@ print('Will send spliced audio to {}'.format(output_dir_name))
 print('Will send spliced and downsampled audio to {}'.format(ds_output_dir_name))
 print('Will write data info to {}'.format(output_data_info_file_name))
 
-processed_data_info = settings
-processed_data_info['original_bitrate'] = None
-
 for input_dir_name_dir in input_dir_name_dirs:
     input_dir_name = os.path.join(input_dir_name_base, input_dir_name_dir)
 
@@ -61,10 +58,9 @@ for input_dir_name_dir in input_dir_name_dirs:
 
         # This is the total audio track duration minus the start and end times
         duration = sox.file_info.duration(input_filename) - start_offset + end_offset
-        if processed_data_info['original_bitrate'] is None:
-            processed_data_info['original_bitrate'] = sox.file_info.bitrate(input_filename)
-            if 'kb' in processed_data_info['sampling_rate_units']:
-                processed_data_info['original_bitrate'] *= 1000
+        settings['original_bitrate'] = sox.file_info.bitrate(input_filename)
+        if 'kb' in settings['sampling_rate_units']:
+            settings['original_bitrate'] *= 1000
 
 
         def filename_template(original_filename, begin, end):
@@ -97,4 +93,4 @@ for input_dir_name_dir in input_dir_name_dirs:
             splice_start_time = end
 
 with open(output_data_info_file_name, 'w') as outfile:
-    json.dump(processed_data_info, outfile)
+    json.dump(settings, outfile)
