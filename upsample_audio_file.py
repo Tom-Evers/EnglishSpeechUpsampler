@@ -7,11 +7,11 @@ from inputs import get_truth_ds_filename_pairs
 import tensorflow as tf
 from models import deep_residual_network
 
-data_settings_file = os.path.join('settings', 'data_settings.json')
+data_settings = os.path.join('settings', 'data_settings.json')
 model_settings_file = os.path.join('settings', 'model_settings.json')
-upsampling_settings_file = os.path.join('settings', 'upsampling_settings.json')
+upsampling_settings_file = os.path.join('settings', 'upsampling_setting.json')
 
-data_settings = json.load(open(data_settings_file))
+data_settings = json.load(open(data_settings))
 model_settings = json.load(open(model_settings_file))
 upsampling_settings = json.load(open(upsampling_settings_file))
 
@@ -27,21 +27,26 @@ true_wf = wf_pairs[0]
 true_wf = true_wf.reshape((-1, 1))
 
 KBPS = true_br
-SECONDS_PER_INPUT = data_settings_file['splice_duration']
+SECONDS_PER_INPUT = data_settings['splice_duration']
 INPUT_SIZE = KBPS * SECONDS_PER_INPUT
-DOWNSAMPLE_FACTOR = KBPS // data_settings_file['downsample_rate']
-BEGIN_OFFSET = data_settings_file['start_time']
-END_OFFSET = data_settings_file['end_time']
+DOWNSAMPLE_FACTOR = KBPS // data_settings['downsample_rate']
+BEGIN_OFFSET = data_settings['start_time']
+END_OFFSET = data_settings['end_time']
+
+
+def path_sep_sanitization(x):
+    return x.replace('\\', os.sep).replace('/', os.sep)
+
 
 file_name = upsampling_settings['input_file']
+file_name = os.path.join(path_sep_sanitization(file_name))
 source_dir = os.path.split(file_name)[0]
 file_name_base = os.path.split(file_name)[1]
 
 model_checkpoint_file_name = upsampling_settings['model_checkpoint_file']
 
 true_wf, true_br = librosa.load(file_name, sr=None, mono=True)
-ds_wf, ds_br = librosa.load(file_name, sr=int(true_br / DOWNSAMPLE_FACTOR),
-                            mono=True)
+ds_wf, ds_br = librosa.load(file_name, sr=int(true_br / DOWNSAMPLE_FACTOR), mono=True)
 ds_wf = librosa.core.resample(ds_wf, ds_br, true_br)
 
 # trim waveforms
@@ -98,3 +103,5 @@ librosa.output.write_wav(os.path.join(source_dir, 'reco_' + file_name_base),
 
 # ###################
 # ###################
+
+

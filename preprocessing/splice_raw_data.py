@@ -64,7 +64,7 @@ for input_dir_name_dir in input_dir_name_dirs:
 
 
         def filename_template(original_filename, begin, end):
-            return "{}_{}-{}.wav".format(original_filename, str(int(begin)).zfill(2), str(int(end)).zfill(2))
+            return "{}_{}-{}.wav".format(original_filename, str(int(begin*1000)).zfill(5), str(int(end*1000)).zfill(5))
 
 
         splice_start_time = start_offset
